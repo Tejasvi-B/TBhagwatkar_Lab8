@@ -1,5 +1,7 @@
 // BalloonBuster.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+// Tejasvi Bhagwatkar
+// Lab 8: Making a duck hunting game 
+// Created 10/25/2022s
 
 
 
@@ -23,54 +25,54 @@ void LoadTex(Texture& tex, string filename) {
 
 int main()
 {
-    RenderWindow window(VideoMode(800, 600), "Duck Hunt");
+    RenderWindow window(VideoMode(800, 600), "Duck Hunt"); //determining the game window size 
     World world(Vector2f(0, 0));
     int score(0);
     int arrows(5);
 
     PhysicsSprite& crossBow = *new PhysicsSprite();
     Texture cbowTex;
-    LoadTex(cbowTex, "images/crossbow.png");
+    LoadTex(cbowTex, "images/crossbow.png");  //loading the crossbow image
     crossBow.setTexture(cbowTex);
     Vector2f sz = crossBow.getSize();
-    crossBow.setCenter(Vector2f(400,
+    crossBow.setCenter(Vector2f(400,   //placing the crossbow in the bottom center of the game window
         600 - (sz.y / 2)));
 
     PhysicsSprite arrow;
     Texture arrowTex;
-    LoadTex(arrowTex, "images/arrow.png");
+    LoadTex(arrowTex, "images/arrow.png");  //looding the arrow image into the game
     arrow.setTexture(arrowTex);
     bool drawingArrow(false);
 
-    PhysicsRectangle top;
+    PhysicsRectangle top;  //creating a border at the top of the game window with a width of 5
     top.setSize(Vector2f(800, 10));
     top.setCenter(Vector2f(400, 5));
     top.setStatic(true);
     world.AddPhysicsBody(top);
 
-    PhysicsRectangle left;
+    PhysicsRectangle left;  // creating a border on the left side with a width of 5
     left.setSize(Vector2f(10, 600));
     left.setCenter(Vector2f(5, 300));
     left.setStatic(true);
     world.AddPhysicsBody(left);
 
-    PhysicsRectangle right;
+    PhysicsRectangle right; // creating a border on the right side with a width of 5
     right.setSize(Vector2f(10, 600));
     right.setCenter(Vector2f(795, 300));
     right.setStatic(true);
     world.AddPhysicsBody(right);
 
     Texture redTex;
-    LoadTex(redTex, "duck(3).png");
+    LoadTex(redTex, "duck(3).png"); //loading the duck image into the game
     PhysicsShapeList<PhysicsSprite> balloons;
     for (int i(0); i < 30; i++) {
         PhysicsSprite& balloon = balloons.Create();
         balloon.setTexture(redTex);
         balloon.setSize(Vector2f(100, 100));
-        int x = 30 + ((750 / 5) * i);
+        int x = 30 + ((750 / 5) * i);  // release a new duck image at this iteration from the left side of the window
         Vector2f sz = balloon.getSize();
         balloon.setCenter(Vector2f(x, 20 + (sz.y / 2)));
-        balloon.setVelocity(Vector2f(0.25, 0));
+        balloon.setVelocity(Vector2f(0.25, 0));  // ducks will be moving across the screen at this velocity
         world.AddPhysicsBody(balloon);
         balloon.onCollision =
             [&drawingArrow, &world, &arrow, &balloon, &balloons, &score, &right]
@@ -97,8 +99,8 @@ int main()
 
     Text scoreText;
     Font font;
-    if (!font.loadFromFile("doodle.ttf")) {
-        cout << "Couldn't load font arial.ttf" << endl;
+    if (!font.loadFromFile("doodle.ttf")) {  //load the font file
+        cout << "Couldn't load font doodle.ttf" << endl;
         exit(1);
     }
     scoreText.setFont(font);
@@ -163,14 +165,14 @@ int main()
             balloon.onCollision =
                 [&drawingArrow, &world, &arrow, &balloon, &balloons, &score, &right]
             (PhysicsBodyCollisionResult result) {
-                if (result.object2 == arrow) {
+                if (result.object2 == arrow) { //removes the duck as the arrow hits it
                     drawingArrow = false;
                     world.RemovePhysicsBody(arrow);
                     world.RemovePhysicsBody(balloon);
                     balloons.QueueRemove(balloon);
                     score += 10;
                 }
-                if (result.object2 == right) {
+                if (result.object2 == right) { // removes the duck as it crosses the right border
                     world.RemovePhysicsBody(balloon);
                     balloons.QueueRemove(balloon);
                 }
